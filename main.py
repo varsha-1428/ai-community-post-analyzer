@@ -24,7 +24,33 @@ def analyze_post(state:GraphState):
 builder = StateGraph(GraphState)
 builder.add_node("analyze_post", analyze_post)
 builder.add_edge(START, "analyze_post")
-builder.add_edge("analyze_post", END)
+# builder.add_edge("analyze_post", END)
+
+def moderation_decision(state:GraphState):
+    if state["analysis"].toxic:
+        return "review"
+    return "publish"
+
+def publish_post(state:GraphState):
+    print("Publishing post...")
+    return {}
+
+def moderator_review(state: GraphState):
+    print("Sending to moderator review...")
+    return {}
+
+builder.add_node("publish", publish_post)
+builder.add_node("review", moderator_review)
+builder.add_conditional_edges(
+    "analyze_post",
+    moderation_decision,
+    {
+        "publish": "publish",
+        "review": "review"
+    }
+)
+builder.add_edge("publish",END)
+builder.add_edge("review",END)
 graph = builder.compile()
 
 result = graph.invoke({
