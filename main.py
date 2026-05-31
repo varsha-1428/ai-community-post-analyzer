@@ -14,6 +14,7 @@ structured_llm = llm.with_structured_output(PostAnalysis)
 class GraphState(TypedDict):
     post: str
     analysis: PostAnalysis
+    action: str
 
 def analyze_post(state:GraphState):
     result = structured_llm.invoke(state["post"])
@@ -32,12 +33,14 @@ def moderation_decision(state:GraphState):
     return "publish"
 
 def publish_post(state:GraphState):
-    print("Publishing post...")
-    return {}
+    return {
+        "action": "publish"
+    }
 
 def moderator_review(state: GraphState):
-    print("Sending to moderator review...")
-    return {}
+    return {
+        "action": "review"
+    }
 
 builder.add_node("publish", publish_post)
 builder.add_node("review", moderator_review)
@@ -57,4 +60,4 @@ result = graph.invoke({
     "post": "LangGraph feels difficult for beginners."
 })
 
-print(result) # analysis also gets added
+print(result) # analysis, action also gets added
