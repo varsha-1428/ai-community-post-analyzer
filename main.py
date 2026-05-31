@@ -1,6 +1,8 @@
-def main():
-    print("Hello from ai-community-post-analyzer!")
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
-
-if __name__ == "__main__":
-    main()
+from langchain_groq import ChatGroq
+llm = ChatGroq(model="qwen/qwen3-32b")
+response = llm.invoke("Hi, How are you?")
+print(response.content)
